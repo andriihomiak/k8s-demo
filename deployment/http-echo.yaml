@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: echo-deployment
+  template:
+    metadata:
+      labels:
+        app: echo-deployment
+    spec:
+      containers:
+      - name: echo-deployment
+        image: hashicorp/http-echo
+        args:
+          - -text="hello world from deployment v2!"
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5678
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-deployment
+spec:
+  selector:
+    app: echo-deployment
+  ports:
+  - port: 5678
+    targetPort: 5678
+  type: LoadBalancer
+
